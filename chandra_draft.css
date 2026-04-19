@@ -1,0 +1,410 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Great+Vibes&display=swap');
+
+:root {
+  --bg: #f3efe8;
+  --olive: #6b7c3f;
+  --gold: #c9a227;
+  --text-dark: #2f2f2f;
+  --card-bg: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0; /* Ensure no padding */
+  background-color: var(--bg); /* Fallback */
+  background: var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  min-height: 100vh; /* Ensure full height */
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+  margin: 0;
+}
+
+.section {
+  padding: 60px 20px;
+}
+
+.light {
+  background: #ebe6df;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Hero Wrapper for the outer padding/margin if needed */
+/* Hero Wrapper for the outer padding/margin if needed */
+.hero-wrapper {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.hero {
+  text-align: center;
+  padding: 120px 20px 80px; 
+  position: relative;
+  background-size: cover;
+  background-position: center bottom; /* Anchor to bottom mostly for portraits */
+  background-repeat: no-repeat;
+  min-height: 100vh; /* Full height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 40px; /* Rounded corners like the sample */
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin: 0 auto;
+  max-width: 1200px; /* Limit width */
+  transition: all 0.3s ease;
+}
+
+/* Mobile Responsive: Full Screen */
+@media (max-width: 768px) {
+  .hero-wrapper {
+    padding: 0;
+  }
+  .hero {
+    border-radius: 0;
+    min-height: 100vh;
+    padding-top: 80px; /* Adjust top padding for better spacing on mobile */
+  }
+}
+
+/* Semi-transparent overlay to make background "samar" */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(243, 239, 232, 0.4); /* Faint overlay using theme bg color */
+  backdrop-filter: blur(2px); /* Slight blur */
+  z-index: 1;
+}
+
+/* Content wrapper ensuring it sits on top of overlay */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.subheading {
+  color: var(--olive);
+  font-family: 'Great Vibes', cursive;
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: 400;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8); /* Readability */
+}
+
+.name-box h1 {
+  font-size: 42px;
+  font-weight: 600;
+}
+
+.name-box span {
+  font-size: 24px;
+  display: block;
+  margin: 10px 0;
+  color: var(--gold);
+}
+
+.family-text {
+  margin-top: 20px;
+  color: #666;
+}
+
+.date {
+  margin: 20px 0;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: var(--olive);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-outline {
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  margin-top: 15px;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: white;
+  width: 100%;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.accent {
+  color: var(--gold);
+  margin-bottom: 15px;
+}
+
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px 0;
+}
+
+/* Central Line */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  background-color: #f7e6b4; /* Light gold line */
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -1px;
+}
+
+.timeline-item {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+  box-sizing: border-box;
+}
+
+/* Left side */
+.timeline-item.left {
+  left: 0;
+  text-align: right;
+}
+
+/* Right side */
+.timeline-item.right {
+  left: 50%;
+  text-align: left;
+}
+
+/* The Heart Icon */
+.timeline-item::after {
+  content: '❤';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  right: -20px;
+  background-color: #fceeb5; /* Light yellow circle */
+  border: 2px solid #eec170; /* Gold border */
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+  display: flex; /* Centering the heart */
+  align-items: center;
+  justify-content: center;
+  color: #c9a227; /* Gold heart color */
+  font-size: 18px;
+}
+
+/* Fix icon position for right side */
+.timeline-item.right::after {
+  left: -20px;
+}
+
+.year {
+  color: #eec170;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 5px;
+  font-family: 'Inter', sans-serif;
+}
+
+.timeline-item h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 24px;
+  margin: 5px 0;
+  color: #2f2f2f;
+}
+
+.timeline-item p {
+  font-size: 14px;
+  color: #999;
+  font-family: 'Great Vibes', cursive;
+  font-size: 20px; /* Script font for description */
+  margin: 0;
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.countdown div {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  min-width: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.countdown span {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* RSVP Form Styles */
+.rsvp {
+  max-width: 500px;
+  margin: auto;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.rsvp-label {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rsvp-input {
+  width: 100%;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e6e1d6;
+  background-color: #fcfbf9;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #555;
+  transition: border-color 0.3s;
+}
+
+.rsvp-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.attendance-options {
+  display: flex;
+  gap: 15px;
+}
+
+.radio-option {
+  flex: 1;
+  cursor: pointer;
+  position: relative;
+}
+
+.radio-option input {
+  display: none; /* Hide actual radio button */
+}
+
+/* Base button style (Outline) */
+.btn-check {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0; /* Default gray border */
+  color: #888;
+  background: white;
+  font-family: 'Playfair Display', serif;
+  transition: all 0.3s;
+}
+
+/* Checked State Logic */
+.radio-option input:checked + .btn-check {
+  background-color: #8f9e5e; /* Olive */
+  border-color: #8f9e5e;
+  color: white;
+}
+
+/* Specific overrides based on value if needed, but generic checked logic is better for toggling */
+/* To match the image exactly where one is solid and one is outline, usually implies state. */
+/* We'll use the checked state to drive the style. */
+
+/* Submit Button Override */
+.rsvp button[type="submit"] {
+  width: 100%;
+  margin-top: 10px;
+  background-color: #c9a227; /* Gold */
+  color: white;
+  padding: 15px;
+  border-radius: 30px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.rsvp button[type="submit"]:hover {
+  background-color: #b08d1f;
+}
+
+footer {
+  background: #3c3c3c;
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+footer h2 {
+  color: var(--gold);
+  margin-top: 10px;
+}
+
+/* Gallery Styles */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  background-color: #eee; /* Placeholder */
+}
