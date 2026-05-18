@@ -51,7 +51,7 @@
           <div class="flex items-start justify-between mb-4">
             <div>
               <h3 class="font-semibold text-gray-900">{{ tenant.name }}</h3>
-              <p class="text-sm text-indigo-600">{{ tenant.subdomain }}.localhost:8080</p>
+              <p class="text-sm text-indigo-600">{{ getPreviewUrl(tenant.subdomain).replace(/^https?:\/\//, '') }}</p>
             </div>
             <div class="flex flex-col items-end gap-1">
               <span 
@@ -75,7 +75,7 @@
             <NuxtLink :to="`/invitations/${tenant.id}/edit`" class="flex-1 btn-primary text-center text-sm">
               Edit
             </NuxtLink>
-            <a :href="`http://localhost:8080/${tenant.subdomain}`" target="_blank" class="btn-secondary text-sm px-3" title="Preview">
+            <a :href="getPreviewUrl(tenant.subdomain)" target="_blank" class="btn-secondary text-sm px-3" title="Preview">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
@@ -144,6 +144,14 @@ definePageMeta({
 
 const config = useRuntimeConfig()
 const authStore = useAuthStore()
+
+const getPreviewUrl = (subdomain: string) => {
+  let baseUrl = (config.public.apiBaseUrl || "").replace(/\/$/, "");
+  if (baseUrl.endsWith("/api/v1")) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 7); // remove /api/v1
+  }
+  return `${baseUrl}/${subdomain}`;
+}
 
 const tenants = ref<any[]>([])
 const loading = ref(true)

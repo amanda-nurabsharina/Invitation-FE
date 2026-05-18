@@ -1047,7 +1047,12 @@ const loveStoryGroups = computed(() => {
 
 const previewUrl = computed(() => {
   if (!tenant.value) return "";
-  return `http://localhost:8080/${tenant.value.subdomain}`;
+  // Clean base URL: remove trailing slash and 'api/v1' suffix if present
+  let baseUrl = (config.public.apiBaseUrl || "").replace(/\/$/, "");
+  if (baseUrl.endsWith("/api/v1")) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 7); // remove /api/v1
+  }
+  return `${baseUrl}/${tenant.value.subdomain}`;
 });
 
 const fetchData = async () => {

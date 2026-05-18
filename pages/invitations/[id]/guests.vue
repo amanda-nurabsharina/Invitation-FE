@@ -391,9 +391,9 @@ const generateLink = (name: string) => {
 
   // Calculate Base URL from API Config
   // (e.g. http://localhost:8080/api/v1 -> http://localhost:8080)
-  let baseUrl = config.public.apiBaseUrl;
-  if (baseUrl.includes("/api/v1")) {
-    baseUrl = baseUrl.replace("/api/v1", "");
+  let baseUrl = (config.public.apiBaseUrl || "").replace(/\/$/, "");
+  if (baseUrl.endsWith("/api/v1")) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 7); // remove /api/v1
   }
 
   // Check if we are in production (undangan.me) or local
