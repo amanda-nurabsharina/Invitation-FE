@@ -281,7 +281,7 @@
                     >
                       Akad / Ceremony
                     </h3>
-                    <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                       <div>
                         <label class="label text-xs">Date</label>
                         <input
@@ -291,12 +291,41 @@
                         />
                       </div>
                       <div>
-                        <label class="label text-xs">Time</label>
-                        <input
-                          v-model="form.akad_time"
-                          class="input"
-                          placeholder="08:00 - 10:00"
-                        />
+                        <label class="label text-xs">Time Range</label>
+                        <div class="flex flex-col gap-2">
+                          <div class="flex items-center gap-2">
+                            <!-- Start Time -->
+                            <div class="flex-1 min-w-[80px]">
+                              <input
+                                v-model="akadStart"
+                                type="time"
+                                class="input text-sm p-2 w-full"
+                              />
+                            </div>
+                            
+                            <span class="text-gray-400 text-xs">to</span>
+                            
+                            <!-- End Time -->
+                            <div class="flex-1 min-w-[80px]">
+                              <input
+                                v-model="akadEnd"
+                                type="time"
+                                :disabled="akadUntilFinished"
+                                class="input text-sm p-2 w-full disabled:bg-gray-100 disabled:text-gray-400"
+                                :placeholder="akadUntilFinished ? 'Selesai' : 'HH:MM'"
+                              />
+                            </div>
+                          </div>
+                          <!-- Until Finished Checkbox -->
+                          <label class="flex items-center gap-2 cursor-pointer mt-1">
+                            <input
+                              type="checkbox"
+                              v-model="akadUntilFinished"
+                              class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                            />
+                            <span class="text-xs text-gray-600 select-none">Sampai Selesai (Until Finished)</span>
+                          </label>
+                        </div>
                       </div>
                     </div>
                     <div class="space-y-3">
@@ -329,7 +358,7 @@
                     >
                       Reception
                     </h3>
-                    <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                       <div>
                         <label class="label text-xs">Date</label>
                         <input
@@ -339,12 +368,41 @@
                         />
                       </div>
                       <div>
-                        <label class="label text-xs">Time</label>
-                        <input
-                          v-model="form.reception_time"
-                          class="input"
-                          placeholder="11:00 - 13:00"
-                        />
+                        <label class="label text-xs">Time Range</label>
+                        <div class="flex flex-col gap-2">
+                          <div class="flex items-center gap-2">
+                            <!-- Start Time -->
+                            <div class="flex-1 min-w-[80px]">
+                              <input
+                                v-model="receptionStart"
+                                type="time"
+                                class="input text-sm p-2 w-full"
+                              />
+                            </div>
+                            
+                            <span class="text-gray-400 text-xs">to</span>
+                            
+                            <!-- End Time -->
+                            <div class="flex-1 min-w-[80px]">
+                              <input
+                                v-model="receptionEnd"
+                                type="time"
+                                :disabled="receptionUntilFinished"
+                                class="input text-sm p-2 w-full disabled:bg-gray-100 disabled:text-gray-400"
+                                :placeholder="receptionUntilFinished ? 'Selesai' : 'HH:MM'"
+                              />
+                            </div>
+                          </div>
+                          <!-- Until Finished Checkbox -->
+                          <label class="flex items-center gap-2 cursor-pointer mt-1">
+                            <input
+                              type="checkbox"
+                              v-model="receptionUntilFinished"
+                              class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                            />
+                            <span class="text-xs text-gray-600 select-none">Sampai Selesai (Until Finished)</span>
+                          </label>
+                        </div>
                       </div>
                     </div>
                     <div class="space-y-3">
@@ -893,7 +951,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, nextTick } from "vue";
+import { ref, reactive, onMounted, computed, nextTick, watch } from "vue";
 import { useAuthStore } from "~/stores/auth";
 
 definePageMeta({
@@ -915,6 +973,86 @@ const saving = ref(false);
 const uploading = ref(false);
 const iframeKey = ref(0);
 const newContentKey = ref("");
+
+// Time picker refs and handlers
+const akadStart = ref("");
+const akadEnd = ref("");
+const akadUntilFinished = ref(false);
+
+const receptionStart = ref("");
+const receptionEnd = ref("");
+const receptionUntilFinished = ref(false);
+
+const parseTimeRange = (timeStr: string) => {
+  if (!timeStr) return { start: "", end: "", untilFinished: false };
+  const cleanStr = timeStr.trim();
+  const parts = cleanStr.split(/[-–]|s\/d/i);
+  let start = "";
+  let end = "";
+  let untilFinished = false;
+
+  if (parts.length > 0) {
+    const startStr = parts[0].trim();
+    const startMatch = startStr.match(/^([01]\d|2[0-3]):([0-5]\d)/);
+    if (startMatch) {
+      start = `${startMatch[1]}:${startMatch[2]}`;
+    }
+  }
+
+  if (parts.length > 1) {
+    const endStr = parts[1].trim();
+    if (/selesai/i.test(endStr)) {
+      untilFinished = true;
+    } else {
+      const endMatch = endStr.match(/^([01]\d|2[0-3]):([0-5]\d)/);
+      if (endMatch) {
+        end = `${endMatch[1]}:${endMatch[2]}`;
+      }
+    }
+  }
+
+  return { start, end, untilFinished };
+};
+
+watch([akadStart, akadEnd, akadUntilFinished], () => {
+  if (!akadStart.value) {
+    form.akad_time = "";
+    return;
+  }
+  if (akadUntilFinished.value) {
+    form.akad_time = `${akadStart.value} - Selesai`;
+  } else if (akadEnd.value) {
+    form.akad_time = `${akadStart.value} - ${akadEnd.value}`;
+  } else {
+    form.akad_time = akadStart.value;
+  }
+});
+
+watch(akadUntilFinished, (val) => {
+  if (val) {
+    akadEnd.value = "";
+  }
+});
+
+watch([receptionStart, receptionEnd, receptionUntilFinished], () => {
+  if (!receptionStart.value) {
+    form.reception_time = "";
+    return;
+  }
+  if (receptionUntilFinished.value) {
+    form.reception_time = `${receptionStart.value} - Selesai`;
+  } else if (receptionEnd.value) {
+    form.reception_time = `${receptionStart.value} - ${receptionEnd.value}`;
+  } else {
+    form.reception_time = receptionStart.value;
+  }
+});
+
+watch(receptionUntilFinished, (val) => {
+  if (val) {
+    receptionEnd.value = "";
+  }
+});
 
 // Edit Name Logic
 const isEditingName = ref(false);
@@ -1083,6 +1221,17 @@ const fetchData = async () => {
         form.akad_date = invitation.value.akad_date.split("T")[0];
       if (invitation.value.reception_date)
         form.reception_date = invitation.value.reception_date.split("T")[0];
+
+      // Parse and assign times
+      const akadParsed = parseTimeRange(invitation.value.akad_time || "");
+      akadStart.value = akadParsed.start;
+      akadEnd.value = akadParsed.end;
+      akadUntilFinished.value = akadParsed.untilFinished;
+
+      const receptionParsed = parseTimeRange(invitation.value.reception_time || "");
+      receptionStart.value = receptionParsed.start;
+      receptionEnd.value = receptionParsed.end;
+      receptionUntilFinished.value = receptionParsed.untilFinished;
 
       // Map ExpiresAt (RFC3339 to datetime-local)
       if (invitation.value.expires_at) {
