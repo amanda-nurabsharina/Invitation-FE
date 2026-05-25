@@ -12,7 +12,7 @@
           </div>
           <div>
             <h1 class="font-semibold text-gray-900">Invitation CMS</h1>
-            <p class="text-xs text-gray-500">Wedding Platform</p>
+            <p class="text-xs text-gray-500">Invitation Platform</p>
           </div>
         </div>
 

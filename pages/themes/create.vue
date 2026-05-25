@@ -87,7 +87,58 @@
               </p>
             </div>
 
-            <!-- Removed Preview Image URL Input -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1"
+                >Preview Image</label
+              >
+              <div class="flex flex-col gap-2">
+                <div class="flex gap-2">
+                  <input
+                    v-model="form.preview_image"
+                    type="text"
+                    class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-xs"
+                    placeholder="https://... or upload"
+                  />
+                  <label
+                    class="btn-secondary text-xs px-3 py-1.5 cursor-pointer whitespace-nowrap flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  >
+                    {{ uploadingPreview ? "..." : "Upload" }}
+                    <input
+                      type="file"
+                      class="hidden"
+                      accept="image/*"
+                      @change="uploadPreviewImage"
+                      :disabled="uploadingPreview"
+                    />
+                  </label>
+                </div>
+                <div v-if="form.preview_image" class="relative group aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                  <img
+                    :src="form.preview_image"
+                    class="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    @click="form.preview_image = ''"
+                    class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow transition opacity-0 group-hover:opacity-100"
+                    title="Remove Image"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <div
               class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
@@ -395,6 +446,7 @@ const form = reactive({
   name: "",
   slug: "",
   category: "",
+  preview_image: "",
   is_premium: false,
   is_active: true,
   custom_html: "",
@@ -403,9 +455,42 @@ const form = reactive({
   colors: {},
 });
 
+const uploadingPreview = ref(false);
+
+const uploadPreviewImage = async (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (!input.files?.length) return;
+
+  uploadingPreview.value = true;
+  try {
+    const formData = new FormData();
+    formData.append("file", input.files[0]);
+
+    const uploadRes: any = await $fetch(
+      `${config.public.apiBaseUrl}/upload/image?type=photos`,
+      {
+        method: "POST",
+        body: formData,
+        headers: { Authorization: `Bearer ${authStore.accessToken}` },
+      },
+    );
+    if (uploadRes.data && uploadRes.data.url) {
+      form.preview_image = uploadRes.data.url;
+    }
+  } catch (e: any) {
+    console.error(e);
+    alert(e.data?.message || "Upload failed");
+  } finally {
+    uploadingPreview.value = false;
+    input.value = "";
+  }
+};
+
 const previewContent = computed(() => {
   let html = form.custom_html || "";
   const css = form.custom_css || "";
+
+  if (!html) return "";
 
   // Inject CSS
   if (css) {
@@ -416,50 +501,98 @@ const previewContent = computed(() => {
     }
   }
 
-  // Dummy Data Replacements matches categories logic
+  // Inject base href to resolve relative assets (css, js, images) from backend
+  const apiBase = config.public.apiBaseUrl || "http://localhost:8080";
+  const backendUrl = apiBase.split("/api/v1")[0] || "http://localhost:8080";
+  const baseTag = `<base href="${backendUrl}/" />`;
+
+  if (html.includes("<head>")) {
+    html = html.replace("<head>", `<head>${baseTag}`);
+  } else if (html.includes("<html>")) {
+    html = html.replace("<html>", `<html><head>${baseTag}</head>`);
+  } else {
+    html = baseTag + html;
+  }
+
+  // Resolve root-absolute paths starting with /assets/ to backend URL
+  html = html.split('href="/assets/').join(`href="${backendUrl}/assets/`);
+  html = html.split('src="/assets/').join(`src="${backendUrl}/assets/`);
+  html = html.split("href='/assets/").join(`href='${backendUrl}/assets/`);
+  html = html.split("src='/assets/").join(`src='${backendUrl}/assets/`);
+
+  // Comprehensive Dummy Data Replacements
   const replacements: Record<string, string> = {
-    "{{.GroomName}}": "Chandra",
-    "{{.BrideName}}": "Kirana",
+    // Mempelai / Couple
+    "{{.GroomName}}": "Chandra Kirana",
+    "{{.BrideName}}": "Kirana Lestari",
     "{{.GroomNickname}}": "Chandra",
-    "{{.BrideNickname}}": "Kiran",
+    "{{.BrideNickname}}": "Kirana",
     "{{.GroomFather}}": "Bapak H. Joko",
     "{{.GroomMother}}": "Ibu Hj. Siti",
     "{{.BrideFather}}": "Bapak H. Budi",
     "{{.BrideMother}}": "Ibu Hj. Rina",
+    
+    // Photos & Images
+    "{{.CouplePhoto}}": "https://images.unsplash.com/photo-1621621667797-e06afc217fb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+    "{{.GroomPhoto}}": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=60",
+    "{{.BridePhoto}}": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=60",
+    "{{.CoverImage}}": "https://plus.unsplash.com/premium_photo-1661676233405-b772c9162986?q=80&w=2664&auto=format&fit=crop",
+    "{{.BackgroundImage}}": "https://images.unsplash.com/photo-1519225421980-715cb0202128?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+    "{{.OGImage}}": "https://images.unsplash.com/photo-1519225421980-715cb0202128?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+    "{{.URL}}": "https://images.unsplash.com/photo-1519225421980-715cb0202128?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    "{{$bg}}": "https://images.unsplash.com/photo-1519225421980-715cb0202128?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+    
+    // Dates & Times
+    "{{.WeddingDate}}": "Minggu, 10 Agustus 2026",
+    "{{.WeddingDateISO}}": "2026-08-10",
     "{{.AkadDateFormatted}}": "Minggu, 10 Agustus 2026",
     "{{.ReceptionDateFormatted}}": "Minggu, 10 Agustus 2026",
-    "{{.WeddingDateISO}}": "2026-08-10",
     "{{.AkadTime}}": "09:00 WIB",
     "{{.ReceptionTime}}": "11:00 - 13:00 WIB",
+    
+    // Locations
     "{{.AkadLocation}}": "Masjid Al-Ikhlas",
     "{{.ReceptionLocation}}": "Gedung Pernikahan Indah",
     "{{.AkadAddress}}": "Jl. Merdeka No. 1, Jakarta",
     "{{.ReceptionAddress}}": "Jl. Kebahagiaan No. 10, Jakarta",
     "{{.AkadMapsURL}}": "#",
     "{{.ReceptionMapsURL}}": "#",
-    "{{.CoverImage}}":
-      "https://plus.unsplash.com/premium_photo-1661676233405-b772c9162986?q=80&w=2664&auto=format&fit=crop",
-    "{{.CouplePhoto}}":
-      "https://images.unsplash.com/photo-1621621667797-e06afc217fb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-    "{{.GroomPhoto}}":
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=60",
-    "{{.BridePhoto}}":
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=60",
-    "{{.BackgroundImage}}":
-      "https://images.unsplash.com/photo-1519225421980-715cb0202128?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-    "{{.MetaDescription}}": "Undangan Pernikahan Chandra & Kirana",
+    
+    // Theme Assets
+    "{{.ThemeCSS}}": `assets/css/themes/${form.slug || "elegant"}.css`,
+    "{{.ThemeInlineCSS}}": css,
+    "{{.CustomCSS}}": css,
+    
+    // Love Story variables
+    "{{$s1y}}": "2020",
+    "{{$s1t}}": "Pertama Bertemu",
+    "{{$s1d}}": "Kami pertama kali bertemu di sebuah perpustakaan kota saat sama-sama mencari buku yang sama.",
+    "{{$s2y}}": "2022",
+    "{{$s2t}}": "Mulai Menjalin Komitmen",
+    "{{$s2d}}": "Setelah dua tahun berteman dekat, kami memutuskan untuk berkomitmen melangkah bersama.",
+    "{{$s3y}}": "2025",
+    "{{$s3t}}": "Lamaran",
+    "{{$s3d}}": "Di hadapan keluarga besar kedua belah pihak, kami melangsungkan acara lamaran resmi.",
+    
+    // Gift Account variables
+    "{{$giftBank}}": "Bank BCA",
+    "{{$giftAcc}}": "123-456-7890",
+    "{{$giftHolder}}": "Chandra Kirana",
+    
+    // Other placeholders
     "{{.MetaTitle}}": "The Wedding of Chandra & Kirana",
+    "{{.MetaDescription}}": "Undangan Pernikahan Chandra & Kirana",
     "{{.Subdomain}}": "chandra-kirana",
+    "{{.GuestName}}": "Nama Tamu Undangan",
     "{{.MusicURL}}": "",
-    "{{.LoveStory}}": "A beautiful journey...",
-    "{{.Barcode}}":
-      "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example",
-    "{{.Video}}": "https://www.youtube.com/embed/dQw4w9WgXcQ",
   };
 
   for (const [key, value] of Object.entries(replacements)) {
     html = html.split(key).join(value);
   }
+
+  // Strip all remaining Go template commands (e.g. {{if ...}}, {{range ...}}, {{end}}, etc.)
+  html = html.replace(/{{\s*[^}]+\s*}}/g, "");
 
   return html;
 });

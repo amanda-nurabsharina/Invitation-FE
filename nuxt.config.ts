@@ -21,7 +21,7 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Wedding Invitation CMS - Manage your digital wedding invitations' },
+        { name: 'description', content: 'Invitation CMS - Manage your digital invitations' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

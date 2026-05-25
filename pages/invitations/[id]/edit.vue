@@ -203,7 +203,7 @@
                   <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                       <div>
-                        <label class="label text-xs">Groom Nickname</label>
+                        <label class="label text-xs">Groom Nickname <span class="text-rose-500">*</span></label>
                         <input
                           v-model="form.groom_nickname"
                           class="input"
@@ -211,7 +211,7 @@
                         />
                       </div>
                       <div>
-                        <label class="label text-xs">Bride Nickname</label>
+                        <label class="label text-xs">Bride Nickname <span class="text-rose-500">*</span></label>
                         <input
                           v-model="form.bride_nickname"
                           class="input"
@@ -220,7 +220,7 @@
                       </div>
                     </div>
                     <div>
-                      <label class="label text-xs">Groom Full Name</label>
+                      <label class="label text-xs">Groom Full Name <span class="text-rose-500">*</span></label>
                       <input
                         v-model="form.groom_name"
                         class="input"
@@ -241,7 +241,7 @@
                     <div class="border-t border-gray-100 my-4"></div>
 
                     <div>
-                      <label class="label text-xs">Bride Full Name</label>
+                      <label class="label text-xs">Bride Full Name <span class="text-rose-500">*</span></label>
                       <input
                         v-model="form.bride_name"
                         class="input"
@@ -283,7 +283,7 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                       <div>
-                        <label class="label text-xs">Date</label>
+                        <label class="label text-xs">Date <span class="text-rose-500">*</span></label>
                         <input
                           v-model="form.akad_date"
                           type="date"
@@ -291,7 +291,7 @@
                         />
                       </div>
                       <div>
-                        <label class="label text-xs">Time Range</label>
+                        <label class="label text-xs">Time Range <span class="text-rose-500">*</span></label>
                         <div class="flex flex-col gap-2">
                           <div class="flex items-center gap-2">
                             <!-- Start Time -->
@@ -330,11 +330,11 @@
                     </div>
                     <div class="space-y-3">
                       <div>
-                        <label class="label text-xs">Location Name</label>
+                        <label class="label text-xs">Location Name <span class="text-rose-500">*</span></label>
                         <input v-model="form.akad_location" class="input" />
                       </div>
                       <div>
-                        <label class="label text-xs">Address</label>
+                        <label class="label text-xs">Address <span class="text-rose-500">*</span></label>
                         <textarea
                           v-model="form.akad_address"
                           class="input"
@@ -360,7 +360,7 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                       <div>
-                        <label class="label text-xs">Date</label>
+                        <label class="label text-xs">Date <span class="text-rose-500">*</span></label>
                         <input
                           v-model="form.reception_date"
                           type="date"
@@ -368,7 +368,7 @@
                         />
                       </div>
                       <div>
-                        <label class="label text-xs">Time Range</label>
+                        <label class="label text-xs">Time Range <span class="text-rose-500">*</span></label>
                         <div class="flex flex-col gap-2">
                           <div class="flex items-center gap-2">
                             <!-- Start Time -->
@@ -407,14 +407,14 @@
                     </div>
                     <div class="space-y-3">
                       <div>
-                        <label class="label text-xs">Location Name</label>
+                        <label class="label text-xs">Location Name <span class="text-rose-500">*</span></label>
                         <input
                           v-model="form.reception_location"
                           class="input"
                         />
                       </div>
                       <div>
-                        <label class="label text-xs">Address</label>
+                        <label class="label text-xs">Address <span class="text-rose-500">*</span></label>
                         <textarea
                           v-model="form.reception_address"
                           class="input"
@@ -507,7 +507,7 @@
                   </h2>
                   <div class="space-y-4">
                     <div>
-                      <label class="label text-xs">Selected Theme</label>
+                      <label class="label text-xs">Selected Theme <span class="text-rose-500">*</span></label>
                       <select v-model="form.theme_id" class="input">
                         <option value="">-- Select Theme --</option>
                         <option v-for="t in themes" :key="t.id" :value="t.id">
@@ -864,7 +864,7 @@
                   <div class="space-y-4">
                     <div>
                       <label class="label"
-                        >Expiration Date (Auto-Unpublish)</label
+                        >Expiration Date (Auto-Unpublish) <span class="text-rose-500">*</span></label
                       >
                       <input
                         type="datetime-local"
@@ -1376,6 +1376,10 @@ const copyToClipboard = (text: string) => {
 };
 
 const saveInvitation = async () => {
+  if (!form.expires_at) {
+    alert("Expiration Date (Auto-Unpublish) is required");
+    return;
+  }
   saving.value = true;
   try {
     // Create payload

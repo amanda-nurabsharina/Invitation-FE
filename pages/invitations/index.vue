@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">My Invitations</h1>
-          <p class="text-gray-500 mt-1">Manage all your wedding invitations</p>
+          <p class="text-gray-500 mt-1">Manage all your digital invitations</p>
         </div>
         <button @click="showCreateModal = true" class="btn-primary flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +31,7 @@
           </svg>
         </div>
         <h2 class="text-xl font-semibold text-gray-900 mb-2">No invitations yet</h2>
-        <p class="text-gray-500 mb-6 max-w-md mx-auto">Create your first wedding invitation to get started. You can customize everything from themes to music.</p>
+        <p class="text-gray-500 mb-6 max-w-md mx-auto">Create your first invitation to get started. You can customize everything from themes to music.</p>
         <button @click="showCreateModal = true" class="btn-primary">
           Create Your First Invitation
         </button>
@@ -109,7 +109,7 @@
                     v-model="createForm.name" 
                     type="text" 
                     class="input" 
-                    placeholder="e.g., John & Jane Wedding"
+                    placeholder="e.g., John & Jane"
                     required
                   />
                   <p class="text-xs text-gray-500 mt-1">
