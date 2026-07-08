@@ -195,7 +195,7 @@ const createInvitation = async () => {
     
     showCreateModal.value = false
     createForm.name = ''
-    await fetchTenants()
+    navigateTo(`/invitations/${tenantResponse.data.id}/edit`)
   } catch (error: any) {
     alert(error.message || 'Failed to create invitation')
   } finally {

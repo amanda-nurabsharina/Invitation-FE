@@ -3,7 +3,7 @@
     <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
       <!-- Header -->
       <header
-        class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shrink-0 z-20 shadow-sm"
+        class="bg-white border-b border-gray-200 px-4 py-4 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shrink-0 z-20 shadow-sm"
       >
         <div class="flex items-center gap-4">
           <NuxtLink
@@ -25,10 +25,10 @@
             <span class="text-sm font-medium">Back</span>
           </NuxtLink>
           <div>
-            <h1 class="text-xl font-bold text-gray-900 leading-tight">
+            <h1 class="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
               Edit Invitation
             </h1>
-
+ 
             <!-- Editable Tenant Name -->
             <div v-if="!isEditingName" class="flex items-center gap-2 group">
               <p class="text-xs text-gray-500 mt-0.5">
@@ -51,7 +51,7 @@
                 </svg>
               </button>
             </div>
-
+ 
             <form
               v-else
               @submit.prevent="saveTenantName"
@@ -61,7 +61,7 @@
                 ref="nameInputRef"
                 v-model="editNameForm.name"
                 type="text"
-                class="text-xs border border-gray-300 rounded px-2 py-0.5 focus:ring-1 focus:ring-indigo-500 focus:outline-none w-48"
+                class="text-xs border border-gray-300 rounded px-2 py-0.5 focus:ring-1 focus:ring-indigo-500 focus:outline-none w-42 sm:w-48"
                 placeholder="Invitation Name"
                 required
               />
@@ -106,14 +106,14 @@
             </form>
           </div>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-2 sm:gap-3">
           <NuxtLink
             :to="`/invitations/${tenantId}/guests`"
-            class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium hover:bg-indigo-100 transition border border-indigo-200 flex items-center gap-2"
+            class="px-3 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-indigo-100 transition border border-indigo-200 flex items-center gap-1.5"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
+              class="h-4 w-4 shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -130,21 +130,21 @@
           <button
             v-if="invitation && !invitation.is_published"
             @click="publishInvitation"
-            class="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium hover:bg-green-100 transition border border-green-200"
+            class="px-3 py-2 bg-green-50 text-green-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-green-100 transition border border-green-200"
           >
             Publish Live
           </button>
           <button
             v-else-if="invitation?.is_published"
             @click="unpublishInvitation"
-            class="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg text-sm font-medium hover:bg-yellow-100 transition border border-yellow-200"
+            class="px-3 py-2 bg-yellow-50 text-yellow-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-yellow-100 transition border border-yellow-200"
           >
             Unpublish
           </button>
           <button
             @click="saveInvitation"
             :disabled="saving"
-            class="btn-primary px-6 py-2 shadow-sm flex items-center gap-2"
+            class="btn-primary px-4 py-2 sm:px-6 shadow-sm flex items-center gap-1.5 text-xs sm:text-sm"
           >
             <svg
               v-if="saving"
@@ -171,18 +171,18 @@
           </button>
         </div>
       </header>
-
+ 
       <!-- Content -->
       <div v-if="loading" class="flex-1 flex items-center justify-center">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"
         ></div>
       </div>
-
+ 
       <div v-else class="flex-1 overflow-hidden">
         <div class="h-full flex flex-col xl:flex-row">
           <!-- Scrollable Form Container -->
-          <div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 md:p-8">
             <div
               class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8"
             >
@@ -201,7 +201,7 @@
                     Couple Information
                   </h2>
                   <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label class="label text-xs">Groom Nickname <span class="text-rose-500">*</span></label>
                         <input
@@ -227,14 +227,14 @@
                         placeholder="Full Name"
                       />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label class="label text-xs">Father's Name</label>
-                        <input v-model="form.groom_father" class="input" />
+                        <label class="label text-xs">Father's Name <span class="text-rose-500">*</span></label>
+                        <input v-model="form.groom_father" class="input" placeholder="Groom's Father" />
                       </div>
                       <div>
-                        <label class="label text-xs">Mother's Name</label>
-                        <input v-model="form.groom_mother" class="input" />
+                        <label class="label text-xs">Mother's Name <span class="text-rose-500">*</span></label>
+                        <input v-model="form.groom_mother" class="input" placeholder="Groom's Mother" />
                       </div>
                     </div>
 
@@ -248,14 +248,14 @@
                         placeholder="Full Name"
                       />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label class="label text-xs">Father's Name</label>
-                        <input v-model="form.bride_father" class="input" />
+                        <label class="label text-xs">Father's Name <span class="text-rose-500">*</span></label>
+                        <input v-model="form.bride_father" class="input" placeholder="Bride's Father" />
                       </div>
                       <div>
-                        <label class="label text-xs">Mother's Name</label>
-                        <input v-model="form.bride_mother" class="input" />
+                        <label class="label text-xs">Mother's Name <span class="text-rose-500">*</span></label>
+                        <input v-model="form.bride_mother" class="input" placeholder="Bride's Mother" />
                       </div>
                     </div>
                   </div>
@@ -287,6 +287,7 @@
                         <input
                           v-model="form.akad_date"
                           type="date"
+                          :min="todayDate"
                           class="input"
                         />
                       </div>
@@ -364,6 +365,7 @@
                         <input
                           v-model="form.reception_date"
                           type="date"
+                          :min="todayDate"
                           class="input"
                         />
                       </div>
@@ -516,22 +518,37 @@
                       </select>
                     </div>
                     <div>
-                      <label class="label text-xs"
-                        >Background Music (MP3)</label
-                      >
-                      <div class="flex flex-col gap-2">
-                        <div class="flex gap-2">
-                          <input
-                            type="text"
-                            v-model="form.music_url"
-                            class="input flex-1 text-xs"
-                            placeholder="https://... or upload"
-                            readonly
-                          />
-                          <label
-                            class="btn-secondary text-xs px-3 py-2 cursor-pointer whitespace-nowrap"
+                      <label class="label text-xs">Background Music (MP3)</label>
+                      <div class="mt-1">
+                        <!-- Unuploaded State -->
+                        <div
+                          v-if="!form.music_url"
+                          class="border-2 border-dashed border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-8 w-8 text-gray-400 mb-2"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
                           >
-                            Upload MP3
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                            />
+                          </svg>
+                          <p class="text-xs text-gray-500 mb-3 text-center">
+                            No background music uploaded yet.<br />Only MP3 files are supported.
+                          </p>
+                          <label
+                            class="btn-primary text-xs px-4 py-2 cursor-pointer flex items-center gap-1.5"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            Choose MP3 File
                             <input
                               type="file"
                               class="hidden"
@@ -540,12 +557,52 @@
                             />
                           </label>
                         </div>
-                        <audio
-                          v-if="form.music_url"
-                          :src="resolveUrl(form.music_url)"
-                          controls
-                          class="w-full h-8 mt-1"
-                        ></audio>
+
+                        <!-- Uploaded State -->
+                        <div
+                          v-else
+                          class="border border-indigo-100 rounded-xl p-4 bg-indigo-50/20"
+                        >
+                          <div class="flex items-center justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-2.5 overflow-hidden">
+                              <span class="p-2 bg-indigo-100 text-indigo-600 rounded-lg shrink-0">
+                                🎵
+                              </span>
+                              <div class="overflow-hidden">
+                                <p class="text-xs font-semibold text-gray-700 truncate" :title="musicFileName">
+                                  {{ musicFileName }}
+                                </p>
+                                <p class="text-[10px] text-gray-400">Audio uploaded successfully</p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              @click="deleteMusic"
+                              class="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition shrink-0"
+                              title="Delete Music"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                          <audio
+                            :src="resolveUrl(form.music_url)"
+                            controls
+                            class="w-full h-8"
+                          ></audio>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -570,7 +627,7 @@
                     >
                       <div class="space-y-3">
                         <div>
-                          <label class="label text-xs">Bank Name</label>
+                          <label class="label text-xs">Bank Name <span class="text-rose-500">*</span></label>
                           <select
                             v-model="form.content_data.GiftBankName"
                             class="input text-xs"
@@ -601,9 +658,10 @@
                           </select>
                         </div>
                         <div>
-                          <label class="label text-xs">Account Number</label>
+                          <label class="label text-xs">Account Number <span class="text-rose-500">*</span></label>
                           <input
                             v-model="form.content_data.GiftAccountNumber"
+                            @input="form.content_data.GiftAccountNumber = (form.content_data.GiftAccountNumber || '').toString().replace(/\D/g, '')"
                             class="input text-xs"
                             placeholder="e.g. 1234567890"
                             type="text"
@@ -869,6 +927,7 @@
                       <input
                         type="datetime-local"
                         v-model="form.expires_at"
+                        :min="minExpiresAt"
                         class="input"
                       />
                       <p class="text-xs text-gray-500 mt-1">
@@ -925,7 +984,7 @@
                 <!-- Iframe pointing to Backend Rendered Page -->
                 <iframe
                   v-if="previewUrl"
-                  :src="previewUrl"
+                  :src="`${previewUrl}?t=${iframeKey}`"
                   :key="iframeKey"
                   class="w-full h-full bg-white"
                   frameborder="0"
@@ -973,6 +1032,34 @@ const saving = ref(false);
 const uploading = ref(false);
 const iframeKey = ref(0);
 const newContentKey = ref("");
+
+const todayDate = computed(() => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+});
+
+const musicFileName = computed(() => {
+  if (!form.music_url) return "";
+  const parts = form.music_url.split("/");
+  return decodeURIComponent(parts[parts.length - 1]);
+});
+
+const deleteMusic = () => {
+  form.music_url = "";
+};
+
+const minExpiresAt = computed(() => {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+});
 
 // Time picker refs and handlers
 const akadStart = ref("");
@@ -1180,6 +1267,19 @@ const loveStoryGroups = computed(() => {
       }
     }
   });
+
+  // Fallback to 3 default stories so the form is visible on initial creation
+  if (groups.size === 0) {
+    for (let idx = 1; idx <= 3; idx++) {
+      groups.set(idx, {
+        index: idx,
+        year: `Story${idx}Year`,
+        title: `Story${idx}Title`,
+        desc: `Story${idx}Desc`,
+      });
+    }
+  }
+
   return Array.from(groups.values()).sort((a, b) => a.index - b.index);
 });
 
@@ -1240,6 +1340,13 @@ const fetchData = async () => {
       }
 
       if (!form.content_data) form.content_data = {};
+
+      // Pre-select first theme if current theme_id is empty or nil UUID
+      if (!form.theme_id || form.theme_id === "00000000-0000-0000-0000-000000000000") {
+        if (themes.value.length > 0) {
+          form.theme_id = themes.value[0].id;
+        }
+      }
 
       // Fetch Gallery
       await fetchGallery(invitation.value.id);
@@ -1376,10 +1483,73 @@ const copyToClipboard = (text: string) => {
 };
 
 const saveInvitation = async () => {
+  // Validate mandatory fields
+  if (!form.groom_father || !form.groom_father.trim()) {
+    alert("Groom's Father's Name is required");
+    return;
+  }
+  if (!form.groom_mother || !form.groom_mother.trim()) {
+    alert("Groom's Mother's Name is required");
+    return;
+  }
+  if (!form.bride_father || !form.bride_father.trim()) {
+    alert("Bride's Father's Name is required");
+    return;
+  }
+  if (!form.bride_mother || !form.bride_mother.trim()) {
+    alert("Bride's Mother's Name is required");
+    return;
+  }
+  if (!form.akad_date) {
+    alert("Akad Date is required");
+    return;
+  }
+  if (!akadStart.value) {
+    alert("Akad Time (Start Time) is required");
+    return;
+  }
   if (!form.expires_at) {
     alert("Expiration Date (Auto-Unpublish) is required");
     return;
   }
+
+  // Validate Wedding Gift details
+  if (!form.content_data) {
+    form.content_data = {};
+  }
+  if (!form.content_data.GiftBankName) {
+    alert("Wedding Gift: Bank Name is required");
+    return;
+  }
+  const giftAccNum = form.content_data.GiftAccountNumber;
+  if (!giftAccNum || !giftAccNum.toString().trim()) {
+    alert("Wedding Gift: Bank Account Number is required");
+    return;
+  }
+  if (!/^\d+$/.test(giftAccNum.toString())) {
+    alert("Wedding Gift: Bank Account Number must only contain digits");
+    return;
+  }
+
+  // Prevent backdating
+  const todayStr = todayDate.value;
+  if (form.akad_date < todayStr) {
+    alert("Akad Date cannot be in the past");
+    return;
+  }
+  if (form.reception_date && form.reception_date < todayStr) {
+    alert("Reception Date cannot be in the past");
+    return;
+  }
+  if (form.expires_at) {
+    const expiresDate = new Date(form.expires_at);
+    const now = new Date();
+    if (expiresDate < now) {
+      alert("Expiration Date cannot be in the past");
+      return;
+    }
+  }
+
   saving.value = true;
   try {
     // Create payload
@@ -1408,6 +1578,7 @@ const saveInvitation = async () => {
     iframeKey.value++;
     // Update local invitation state
     invitation.value = { ...invitation.value, ...payload };
+    alert("Saved successfully!");
   } catch (e) {
     console.error(e);
     alert("Failed to save");
